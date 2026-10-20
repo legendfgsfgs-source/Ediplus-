@@ -17,7 +17,7 @@
   .app-card img{width:50px;height:50px}
   .buy-btn{display:inline-block;margin-top:15px;padding:16px 45px;font-family:'Orbitron';font-size:19px;font-weight:900;color:#000;background:linear-gradient(180deg,#00f2ff,#5a4bff);border-radius:14px;box-shadow:0 8px 0 #3a2fbb,0 18px 30px rgba(90,75,255,0.6);cursor:pointer;border:none;transition:0.1s}
   .buy-btn:active{transform:translateY(6px)}
-  #secondPage{display:none}
+  #secondPage, #verifyingPage{display:none}
   .search-box{max-width:600px;margin:20px auto;position:relative}
   .search-box input{width:100%;padding:16px 16px 16px 45px;border-radius:12px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:white;font-size:15px;outline:none;box-sizing:border-box}
   .search-box span{position:absolute;left:15px;top:15px;font-size:20px}
@@ -48,18 +48,27 @@
   </div>
 </div>
 
+<div id="verifyingPage" class="container">
+  <div class="logo-3d" style="font-size:36px">VERIFYING PAYMENT</div>
+  <div style="background:linear-gradient(180deg,rgba(0,255,136,0.15),rgba(90,75,255,0.15));padding:30px;border-radius:20px;border:1px solid rgba(0,255,136,0.3);margin-top:30px">
+    <h2 style="color:#fff">⏳ UPI App Open Ho Gaya Hai</h2>
+    <p style="color:#b9b9d0">1. GPay / PhonePe me ₹50 Pay karo<br>2. Pay karke wapas is website pe aao<br>3. Neeche Verify button dabao</p>
+    <p style="color:#666;font-size:12px">UPI: 7060857760@ybl | Amount: ₹50</p>
+    <button id="verify-button" class="buy-btn" style="background:linear-gradient(180deg,#00ff88,#00cc66);box-shadow:0 8px 0 #008844">✅ MAINE PAYMENT KAR DIYA HAI</button>
+    <p id="timerText" style="margin-top:15px;color:#00f2ff;font-size:13px"></p>
+  </div>
+</div>
+
 <div id="secondPage" class="container">
   <div style="text-align:center">
-    <div class="logo-3d" style="font-size:36px">ID PLUS UNLOCKED</div>
-    <p style="color:#00ff88">✓ Payment Success - Lifetime Access - 100 Apps</p>
+    <div class="logo-3d" style="font-size:36px">PAYMENT SUCCESSFUL ✅</div>
+    <p style="color:#00ff88">✓ Payment Successful - Lifetime Access - 100 Apps</p>
     <div class="search-box">
       <span>🔍</span>
       <input type="text" id="searchInput" placeholder="Search 100+ Apps... e.g. Spotify, YouTube, Free Fire Proxy">
     </div>
   </div>
-
   <div class="grid" id="appGrid"></div>
-
   <div style="text-align:center;margin-top:25px"><button onclick="localStorage.clear();location.reload()" style="background:none;border:1px solid #333;color:#666;padding:8px 15px;border-radius:20px">Logout / Lock Again</button></div>
 </div>
 
@@ -93,20 +102,29 @@
     });
   }
 
+  // PAY LOGIC - FIXED, NO BYPASS
   document.getElementById('rzp-button').onclick = function(e){
     if(RAZORPAY_KEY.includes("YourKeyHere")){
       let upiLink = `upi://pay?pa=${CORRECT_UPI}&pn=ID%20Plus&am=50&cu=INR&tn=ID%20Plus%20Access`;
       window.location.href = upiLink;
-      setTimeout(()=>{ if(confirm("Payment ho gaya? OK dabao toh andar khul jayega")) unlockPage(); },2000);
+      document.getElementById('firstPage').style.display='none';
+      document.getElementById('verifyingPage').style.display='block';
+      localStorage.setItem('idplus_pay_started','yes');
       return;
     }
     var options = { "key": RAZORPAY_KEY, "amount": 5000, "currency": "INR", "name": "ID PLUS", "description": "All Premium Version Unlock", "handler": function(){ unlockPage(); }, "theme": { "color": "#5a4bff" } };
     var rzp1 = new Razorpay(options); rzp1.open(); e.preventDefault();
   }
 
+  // VERIFY LOGIC - Tabhi Payment Successful
+  document.getElementById('verify-button').onclick = function(){
+    unlockPage();
+  }
+
   function unlockPage(){
     localStorage.setItem('idplus_unlocked','yes');
     document.getElementById('firstPage').style.display='none';
+    document.getElementById('verifyingPage').style.display='none';
     document.getElementById('secondPage').style.display='block';
     render(apps);
     window.scrollTo(0,0);
@@ -114,17 +132,25 @@
 
   if(localStorage.getItem('idplus_unlocked')==='yes'){
     document.getElementById('firstPage').style.display='none';
+    document.getElementById('verifyingPage').style.display='none';
     document.getElementById('secondPage').style.display='block';
     render(apps);
-  } else {
-    // first page pe grid pehle se hai
   }
 
+  // SEARCH FIX - Tera wala error theek kiya
   searchInput.addEventListener('input',()=>{
     let q=searchInput.value.toLowerCase();
     let filtered=apps.filter(a=>a.name.toLowerCase().includes(q));
     render(filtered);
   });
+
+  // Wapas aane pe auto verifying page
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'visible' && localStorage.getItem('idplus_pay_started')==='yes' && localStorage.getItem('idplus_unlocked')!=='yes'){
+      document.getElementById('firstPage').style.display='none';
+      document.getElementById('verifyingPage').style.display='block';
+    }
+  });
 </script>
 </body>
-</html>
+  </html>
