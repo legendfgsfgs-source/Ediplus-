@@ -40,43 +40,32 @@
     <div class="app-card"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968705.png"><p>Canva</p></div>
     <div class="app-card"><img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png"><p>Netflix Guide</p></div>
   </div>
-  <div style="background:linear-gradient(180deg,rgba(90,75,255,0.25),transparent);padding:30px;border-radius:25px;border:1px solid rgba(90,75,255,0.3)">
+<div style="background:linear-gradient(180deg,rgba(90,75,255,0.25),transparent);padding:30px;border-radius:25px;border:1px solid rgba(90,75,255,0.3)">
     <div style="font-family:'Orbitron';font-size:42px;text-shadow:0 4px 0 #5a4bff">BUY IN ₹50</div>
     <p style="color:#aaa">UPI: 7060857760@ybl</p>
     <button id="rzp-button" class="buy-btn">PAY ₹50 & UNLOCK NOW</button>
-    <p style="font-size:11px;color:#666;margin-top:10px">Razorpay Secure - GPay / PhonePe / Paytm / UPI</p>
+    <p style="font-size:11px;color:#666;margin-top:10px">Secure - GPay / PhonePe / Paytm / UPI</p>
   </div>
-</div>
-
-<div id="verifyingPage" class="container">
-  <div class="logo-3d" style="font-size:36px">VERIFYING PAYMENT</div>
-  <div style="background:linear-gradient(180deg,rgba(0,255,136,0.15),rgba(90,75,255,0.15));padding:30px;border-radius:20px;border:1px solid rgba(0,255,136,0.3);margin-top:30px">
-    <h2 style="color:#fff">⏳ UPI App Open Ho Gaya Hai</h2>
-    <p style="color:#b9b9d0">1. GPay / PhonePe me ₹50 Pay karo<br>2. Pay karke wapas is website pe aao<br>3. Neeche Verify button dabao</p>
-    <p style="color:#666;font-size:12px">UPI: 7060857760@ybl | Amount: ₹50</p>
-    <button id="verify-button" class="buy-btn" style="background:linear-gradient(180deg,#00ff88,#00cc66);box-shadow:0 8px 0 #008844">✅ MAINE PAYMENT KAR DIYA HAI</button>
-    <p id="timerText" style="margin-top:15px;color:#00f2ff;font-size:13px"></p>
-  </div>
-</div>
-
-<div id="secondPage" class="container">
-  <div style="text-align:center">
-    <div class="logo-3d" style="font-size:36px">PAYMENT SUCCESSFUL ✅</div>
-    <p style="color:#00ff88">✓ Payment Successful - Lifetime Access - 100 Apps</p>
-    <div class="search-box">
-      <span>🔍</span>
-      <input type="text" id="searchInput" placeholder="Search 100+ Apps... e.g. Spotify, YouTube, Free Fire Proxy">
-    </div>
-  </div>
-  <div class="grid" id="appGrid"></div>
-  <div style="text-align:center;margin-top:25px"><button onclick="localStorage.clear();location.reload()" style="background:none;border:1px solid #333;color:#666;padding:8px 15px;border-radius:20px">Logout / Lock Again</button></div>
 </div>
 
 <script>
-  const CORRECT_UPI = "7060857760@ybl";
-  const RAZORPAY_KEY = "rzp_test_YourKeyHere";
-  const appGrid = document.getElementById('appGrid');
-  const searchInput = document.getElementById('searchInput');
+document.getElementById('rzp-button').addEventListener('click', function() {
+    // UPI Deep Link - Direct redirect
+    var upiId = "7060857760@ybl";
+    var name = "Your Shop Name";
+    var amount = "50";
+    
+    var upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${encodeURIComponent("Payment for 50")}`;
+    
+    // Ye direct redirect karega, Stay/Leave popup nahi ayega
+    window.location.href = upiUrl;
+
+    // 2 second baad verifying page dikha de
+    setTimeout(function(){
+        document.getElementById('verifyingPage').style.display = 'block';
+    }, 2000);
+});
+</script>
 
   const apps = [
 {name:"YouTube Premium", icon:"https://cdn-icons-png.flaticon.com/512/1384/1384060.png", link:"https://9mod.com/youtube-pro.html"},
